@@ -10,7 +10,6 @@ public class TransactionsDbContext(
     public static string TransactionsDbSchema = "transactions";
     public static string TransactionsMigrationHistory = "TransactionsDbMigrations";
 
-
     public DbSet<Transaction> Transactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
