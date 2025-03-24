@@ -26,6 +26,7 @@ public static class CsvReader
     {
         var users = new Dictionary<Guid, User>();
         var categories = new Dictionary<string, Category>();
+        var transactions = new List<Transaction>();
 
         await foreach (var transaction in ParseLog(filePath, new SemaphoreSlim(1)))
         {
@@ -49,10 +50,11 @@ public static class CsvReader
             else
                 category.TransactionsCount++;
 
-
-            dbContext.Add(transaction);
-            await dbContext.SaveChangesAsync();
+            transactions.Add(transaction);
         }
+
+        await dbContext.AddRangeAsync(transactions);
+        await dbContext.SaveChangesAsync();
 
         var topCategories = categories.Values
             .OrderByDescending(x => x.TransactionsCount)
