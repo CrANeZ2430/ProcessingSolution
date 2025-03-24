@@ -21,7 +21,7 @@ public static class CsvReader
     }
 
     public static async Task<Result> GenerateResultAsync(
-        string filePath, 
+        string filePath,
         TransactionsDbContext dbContext)
     {
         var users = new Dictionary<Guid, User>();
@@ -49,6 +49,7 @@ public static class CsvReader
                 categories[transaction.Category] = new Category(transaction.Category, 1);
             else
                 category.TransactionsCount++;
+        
 
             transactions.Add(transaction);
         }
