@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TransactionsProcessingAPI.Common.ResultModels;
+﻿using TransactionsProcessingAPI.Common.ResultModels;
 using TransactionsProcessingAPI.TransactionsDb;
 
 namespace TransactionsProcessingAPI.Common;
@@ -22,13 +21,11 @@ public static class CsvReader
     }
 
     public static async Task<Result> GenerateResultAsync(
-        string filePath,
-        TransactionsDbContext dbContext,
-        CancellationToken cancellationToken = default)
+        string filePath, 
+        TransactionsDbContext dbContext)
     {
         var users = new Dictionary<Guid, User>();
         var categories = new Dictionary<string, Category>();
-        var transactions = new List<Transaction>();
 
         await foreach (var transaction in ParseLog(filePath, new SemaphoreSlim(1)))
         {
@@ -52,11 +49,10 @@ public static class CsvReader
             else
                 category.TransactionsCount++;
 
-            transactions.Add(transaction);
-        }
 
-        await dbContext.Transactions.AddRangeAsync(transactions);
-        await dbContext.SaveChangesAsync();
+            dbContext.Add(transaction);
+            await dbContext.SaveChangesAsync();
+        }
 
         var topCategories = categories.Values
             .OrderByDescending(x => x.TransactionsCount)

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using TransactionsProcessingAPI.TransactionsDb;
-using Microsoft.EntityFrameworkCore;
 
 namespace TransactionsProcessingAPI.Controllers;
 
@@ -13,14 +12,13 @@ public class TransactionsController(TransactionsDbContext dbContext) : Controlle
     public async Task<IActionResult> GetResult()
     {
         var result = await CsvReader.GenerateResultAsync("transactions_10_thousand.csv", dbContext);
-        return Ok(result);
-    }
+        //var options = new JsonSerializerOptions
+        //{
+        //    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        //    WriteIndented = true
+        //};
+        //string serializedResult = JsonSerializer.Serialize(result, options);
 
-    //For test purposes
-    [HttpDelete]
-    public IActionResult ClearDb()
-    {
-        dbContext.Transactions.ExecuteDelete();
-        return Ok();
+        return Ok(result);
     }
 }
